@@ -1,0 +1,161 @@
+// backend/routes/foodRoute.js
+import express from "express";
+import adminAuth from "../middleware/adminAuth.js";
+import authMiddleware from "../middleware/auth.js";
+import restaurantAuth from "../middleware/restaurantAuth.js";
+import { listFood } from "../controllers/foodController.js";
+import { uploadImage, deleteImage } from "../utils/cloudinaryUpload.js";
+import foodModel from "../models/foodModel.js";
+
+const foodRouter = express.Router();
+const upload = uploadImage; // Cloudinary-backed multer instance
+
+// ── PUBLIC: customer food list (includes customizations) ───────────────────
+foodRouter.get("/list/public", async (req, res) => {
+  try {
+    const foods = await foodModel
+      .find({})
+      .populate("restaurantId", "name logo isActive openingHours location deliveryRadius minimumOrder deliveryTiers");
+    res.json({ success: true, data: foods });
+  } catch (error) {
+    res.json({ success: false, message: "Error listing foods" });
+  }
+});
+
+// ── ADMIN: protected food list ─────────────────────────────────────────────
+foodRouter.get("/list", adminAuth, listFood);
+
+// ── ADMIN: add food (superadmin — restaurantId sent in body) ───────────────
+foodRouter.post("/add", adminAuth, upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) return res.json({ success: false, message: "Image is required" });
+
+    const restaurantId = req.body.restaurantId;
+    if (!restaurantId) return res.json({ success: false, message: "restaurantId is required" });
+
+    let customizations = [];
+    if (req.body.customizations) {
+      try { customizations = JSON.parse(req.body.customizations); } catch (e) {}
+    }
+
+    const food = new foodModel({
+      name:          req.body.name,
+      description:   req.body.description,
+      price:         Number(req.body.price),
+      image:         req.file.path, // Cloudinary secure URL
+      category:      req.body.category,
+      restaurantId,
+      customizations,
+    });
+
+    await food.save();
+    res.json({ success: true, message: "Food Added" });
+  } catch (error) {
+    res.json({ success: false, message: "Error adding food" });
+  }
+});
+
+// ── REMOVE: accepts both superadmin and restaurant admin ───────────────────
+foodRouter.post("/remove", async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return adminAuth(req, res, next);
+  }
+  return restaurantAuth(req, res, next);
+}, async (req, res) => {
+  try {
+    const food = await foodModel.findById(req.body.id);
+    if (!food) return res.json({ success: false, message: "Food not found" });
+
+    if (req.restaurantId && String(food.restaurantId) !== String(req.restaurantId)) {
+      return res.status(403).json({ success: false, message: "Not your food item" });
+    }
+
+    await deleteImage(food.image); // Remove from Cloudinary
+    await foodModel.findByIdAndDelete(req.body.id);
+    res.json({ success: true, message: "Food Removed" });
+  } catch (error) {
+    res.json({ success: false, message: "Error removing food" });
+  }
+});
+
+// ── EDIT: accepts both superadmin and restaurant admin (with customizations) ─
+foodRouter.post("/edit", (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return adminAuth(req, res, next);
+  }
+  return restaurantAuth(req, res, next);
+}, upload.single("image"), async (req, res) => {
+  try {
+    const { id, name, description, price, category } = req.body;
+
+    if (!id) return res.json({ success: false, message: "Food id is required" });
+
+    const food = await foodModel.findById(id);
+    if (!food) return res.json({ success: false, message: "Food not found" });
+
+    if (req.restaurantId && String(food.restaurantId) !== String(req.restaurantId)) {
+      return res.status(403).json({ success: false, message: "Not your food item" });
+    }
+
+    if (name)        food.name        = name;
+    if (description) food.description = description;
+    if (price)       food.price       = Number(price);
+    if (category)    food.category    = category;
+
+    if (req.body.customizations !== undefined) {
+      try {
+        food.customizations = JSON.parse(req.body.customizations);
+      } catch (e) {
+        food.customizations = [];
+      }
+    }
+
+    if (req.file) {
+      await deleteImage(food.image); // Remove old image from Cloudinary
+      food.image = req.file.path;   // Cloudinary secure URL
+    }
+
+    await food.save();
+    res.json({ success: true, message: "Food updated", data: food });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error updating food" });
+  }
+});
+
+// ── Customer: rate a food item ─────────────────────────────────────────────
+foodRouter.post("/rate", authMiddleware, async (req, res) => {
+  try {
+    const userId = String(req.body.userId);
+    const { foodId, score } = req.body;
+
+    if (!foodId || !score || score < 1 || score > 5)
+      return res.json({ success: false, message: "Score must be between 1 and 5." });
+
+    const food = await foodModel.findById(foodId);
+    if (!food) return res.json({ success: false, message: "Food not found." });
+
+    const existingIndex = food.ratings.findIndex(r => r.userId === userId);
+    if (existingIndex >= 0) {
+      food.ratings[existingIndex].score = Number(score);
+    } else {
+      food.ratings.push({ userId, score: Number(score) });
+    }
+
+    food.markModified("ratings");
+
+    const total = food.ratings.reduce((sum, r) => sum + r.score, 0);
+    food.avgRating   = Math.round((total / food.ratings.length) * 10) / 10;
+    food.ratingCount = food.ratings.length;
+    await food.save();
+
+    res.json({ success: true, avgRating: food.avgRating, ratingCount: food.ratingCount });
+  } catch (err) {
+    console.error("[food/rate]", err);
+    res.json({ success: false, message: "Error submitting rating." });
+  }
+});
+
+export default foodRouter;

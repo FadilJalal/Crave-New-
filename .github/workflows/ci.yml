@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Backend: lint + test ───────────────────────────────────────────────────
+  backend:
+    name: Backend (Node.js)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: backend
+        run: npm test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+
+  # ── Frontend build check ───────────────────────────────────────────────────
+  frontend:
+    name: Customer Frontend (Vite build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_BACKEND_URL: http://localhost:4000
+
+  # ── Admin panel build check ────────────────────────────────────────────────
+  admin-super:
+    name: Super Admin Panel (Vite build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: admin-super/package-lock.json
+
+      - name: Install dependencies
+        working-directory: admin-super
+        run: npm ci
+
+      - name: Build
+        working-directory: admin-super
+        run: npm run build
+        env:
+          VITE_BACKEND_URL: http://localhost:4000
+
+  # ── Restaurant admin build check ──────────────────────────────────────────
+  restaurant-admin:
+    name: Restaurant Admin Panel (Vite build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: restaurant-admin/package-lock.json
+
+      - name: Install dependencies
+        working-directory: restaurant-admin
+        run: npm ci
+
+      - name: Build
+        working-directory: restaurant-admin
+        run: npm run build
+        env:
+          VITE_BACKEND_URL: http://localhost:4000

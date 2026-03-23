@@ -1,0 +1,92 @@
+.ot-page { padding: 20px 0 60px; min-height: calc(100vh - var(--navbar-h)); }
+
+/* Back button */
+.ot-back { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 700; font-family: var(--font-body); color: var(--text-2); cursor: pointer; margin-bottom: 14px; transition: border-color 0.2s, color 0.2s; }
+.ot-back:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Hero */
+.ot-hero { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 20px; margin-bottom: 12px; animation: fadeUp 0.3s ease; transition: box-shadow 0.2s; }
+.ot-hero:hover { box-shadow: var(--shadow-md); }
+.ot-hero-done { border-color: #86efac; background: #f0fdf4; }
+.ot-pulse { animation: ot-pulse-anim 0.6s ease; }
+@keyframes ot-pulse-anim { 0%,100%{opacity:1} 50%{opacity:0.6} }
+.ot-hero-icon { font-size: 34px; flex-shrink: 0; }
+.ot-hero-text { flex: 1; }
+.ot-hero-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.ot-hero-desc { font-size: 13px; color: var(--text-3); }
+.ot-eta { display: inline-block; margin-top: 5px; padding: 3px 10px; background: var(--brand-soft); color: var(--brand); border-radius: 50px; font-size: 11px; font-weight: 700; }
+.ot-order-id-badge { flex-shrink: 0; padding: 5px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 50px; font-size: 12px; font-weight: 800; color: var(--text-2); font-family: monospace; }
+
+/* Stepper */
+.ot-stepper { display: flex; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 20px; margin-bottom: 12px; }
+.ot-step { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; }
+.ot-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--text-3); transition: all 0.3s; flex-shrink: 0; }
+.ot-dot-done { border-color: var(--brand); background: var(--brand); color: #fff; }
+.ot-dot-current { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); animation: pulse 1.5s infinite; }
+.ot-dot-num { font-size: 11px; color: var(--text-3); }
+.ot-step-label { font-size: 11px; color: var(--text-3); text-align: center; line-height: 1.3; font-weight: 500; }
+.ot-label-done { color: var(--brand); font-weight: 700; }
+.ot-line { flex: 1; height: 2px; background: var(--border); margin: 14px -6px 0; position: relative; overflow: hidden; }
+.ot-line-active { background: var(--brand); }
+.ot-line-fill { position: absolute; inset: 0; background: var(--brand); }
+
+/* Map section */
+.ot-map-section { margin-bottom: 16px; }
+.ot-section-label { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+
+/* Two-column main layout */
+.ot-main { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+.ot-left { display: flex; flex-direction: column; gap: 12px; }
+.ot-right { position: sticky; top: calc(var(--navbar-h) + 16px); }
+
+/* Cards */
+.ot-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.ot-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; }
+.ot-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+.ot-items { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.ot-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.ot-item-name { flex: 1; color: var(--text); font-weight: 500; }
+.ot-item-qty { color: var(--text-3); font-size: 13px; }
+.ot-item-price { font-weight: 700; color: var(--text); min-width: 70px; text-align: right; }
+.ot-divider { height: 1px; background: var(--border); margin: 14px 0; }
+.ot-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-2); margin-bottom: 8px; }
+.ot-total-bold { font-weight: 800; font-size: 16px; color: var(--text); }
+.ot-pay-badge { padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; }
+.ot-paid { background: #dcfce7; color: #166534; }
+.ot-unpaid { background: var(--brand-soft); color: var(--brand); }
+.ot-info-row { display: flex; gap: 12px; font-size: 14px; margin-bottom: 10px; }
+.ot-info-label { color: var(--text-3); font-weight: 600; min-width: 72px; }
+.ot-info-value { color: var(--text); font-weight: 500; }
+
+/* Footer */
+.ot-footer { display: flex; align-items: center; justify-content: space-between; }
+.ot-last-updated { font-size: 13px; color: var(--text-3); display: flex; align-items: center; gap: 8px; }
+.ot-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 1.5s infinite; display: inline-block; }
+.ot-btn { padding: 12px 28px; background: var(--brand); color: #fff; border: none; border-radius: 50px; font-size: 14px; font-weight: 700; font-family: var(--font-body); cursor: pointer; }
+.ot-btn:hover { background: var(--brand-dark); }
+.ot-btn-outline { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 700; font-family: var(--font-body); color: var(--text-2); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+.ot-btn-outline:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Skeleton */
+.ot-skeleton-wrap { display: flex; flex-direction: column; gap: 16px; }
+.ot-sk { border-radius: var(--radius-lg); }
+.ot-sk-hero { height: 100px; }
+.ot-sk-steps { height: 80px; }
+.ot-sk-card { height: 200px; }
+
+/* Empty state */
+.ot-empty { text-align: center; padding: 80px 20px; }
+.ot-empty-icon { font-size: 64px; margin-bottom: 16px; }
+.ot-empty-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 8px; font-family: var(--font-display); }
+.ot-empty-sub { font-size: 15px; color: var(--text-3); margin-bottom: 28px; }
+
+@media (max-width: 900px) {
+  .ot-main { grid-template-columns: 1fr; }
+  .ot-right { position: static; }
+}
+@media (max-width: 640px) {
+  .ot-cards { grid-template-columns: 1fr; }
+  .ot-step-label { display: none; }
+  .ot-hero { flex-wrap: wrap; }
+  .ot-order-id-badge { width: 100%; text-align: center; }
+}

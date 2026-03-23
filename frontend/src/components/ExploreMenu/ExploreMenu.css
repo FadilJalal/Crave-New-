@@ -1,0 +1,56 @@
+.em-wrap { padding: 16px 0 36px; }
+
+.em-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.em-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text); }
+.em-sub   { font-size: 13px; color: var(--text-3); font-weight: 500; }
+
+.em-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.em-scroll::-webkit-scrollbar { display: none; }
+
+.em-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  background: #fff;
+  color: var(--text-2);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+.em-pill:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-soft);
+  transform: translateY(-1px);
+}
+.em-pill-active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(255,48,8,0.22);
+}
+.em-pill-active:hover {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.em-pill-emoji { font-size: 16px; line-height: 1; }
